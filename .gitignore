@@ -1,0 +1,4 @@
+.env
+venv/
+creating_mysql.png
+data.py
