@@ -19,20 +19,39 @@ def connect_to_database():
     except mysql.connector.Error as e:
         print(f"Erro ao conectar ao MySQL: {e}")
 
-def create_client(connection, nome, email, telefone, endereco):
+def create_customers_table(connection):
     try:
         cursor = connection.cursor()
-        sql_insert = "INSERT INTO clientes (nome, emai, telefone, endereco) VALUES (%s, %s, %s, %s)"
-        client_data = (nome, email, telefone, endereco)
+        create_table_query = """
+            CREATE TABLE IF NOT EXISTS clientes (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            nome VARCHAR(100) NOT NULL,
+            email VARCHAR(100) UNIQUE NOT NULL,
+            telefone VARCHAR(20),
+            endereco VARCHAR(255),
+            data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        """
+        cursor.execute(create_table_query)
 
-        cursor.execute(sql_insert, client_data)
+
+def create_customers(connection, nome, email, telefone, endereco):
+    try:
+        cursor = connection.cursor()
+        sql_insert = "INSERT INTO customers (nome, emai, telefone, endereco) VALUES (%s, %s, %s, %s)"
+        customers_data = (nome, email, telefone, endereco)
+
+        cursor.execute(sql_insert, customers_data)
         connection.commit()
-        print(f"Cliente '{nome}' inserido com sucesso! ID: {cursor.lastrowid}")
+        print(f"customerse '{nome}' inserido com sucesso! ID: {cursor.lastrowid}")
         return True
     except mysql.connector.Error as e:
-        print(f"Erro ao inserir cliente: {e}")
+        print(f"Erro ao inserir customerse: {e}")
         connection.rollback()
         return False
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
         
 
 def main():
@@ -40,8 +59,12 @@ def main():
     if connection:
         print("Conexão bem sucedida com o banco de dados!")
 
-        # O código para inserir, ler, atualizar e deletar dados virá aqui.
-        # Por exemplo: create_client(), get_all_clients(), etc.
+        customers_name =  "Fulano da Silva"
+        customers_email = "fulano.silva@gmail.com"
+        customers_phone = "91986207879"
+        customers_adress = "Rua A, 1895"
+
+        create_customers(connection, customers_name, customers_email, customers_phone, customers_adress)
 
         connection.close()
         print("Conexão com o MYSQL fechada!")
