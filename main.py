@@ -33,6 +33,16 @@ def create_customers_table(connection):
         );
         """
         cursor.execute(create_table_query)
+        connection.execute(create_table_query)
+        print("Tabela 'clientes' verificada/criada com sucesso.")
+        return True
+    except mysql.connector.Error as e:
+        print(f"Erro ao criar a tabela: {e}")
+        connection.rollback()
+        return False
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
 
 
 def create_customers(connection, nome, email, telefone, endereco):
@@ -58,6 +68,8 @@ def main():
     connection = connect_to_database()
     if connection:
         print("Conexão bem sucedida com o banco de dados!")
+
+        create_customers_table(connection)
 
         customers_name =  "Fulano da Silva"
         customers_email = "fulano.silva@gmail.com"
