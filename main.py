@@ -1,9 +1,12 @@
 import os
 import mysql.connector
+from mysql.connector import errorcode
 from dotenv import load_dotenv
+import database
 
 load_dotenv()
 
+"""
 def connect_to_database():
     try:
         connection = mysql.connector.connect(
@@ -18,12 +21,13 @@ def connect_to_database():
             return connection
     except mysql.connector.Error as e:
         print(f"Erro ao conectar ao MySQL: {e}")
+"""
 
 def create_customers_table(connection):
     try:
         cursor = connection.cursor()
         create_table_query = """
-            CREATE TABLE IF NOT EXISTS clientes (
+            CREATE TABLE IF NOT EXISTS customers (
             id INT AUTO_INCREMENT PRIMARY KEY,
             nome VARCHAR(100) NOT NULL,
             email VARCHAR(100) UNIQUE NOT NULL,
@@ -33,30 +37,38 @@ def create_customers_table(connection):
         );
         """
         cursor.execute(create_table_query)
-        connection.execute(create_table_query)
         print("Tabela 'clientes' verificada/criada com sucesso.")
+        #cursor.execute("SHOW TABLES")
         return True
+    except mysql.connector.Error as err:
+        if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
+            print("A tabela 'clientes' já existe.")
+        else:
+            print(f"Erro ao criar a tabela: {err}")
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+    """
     except mysql.connector.Error as e:
         print(f"Erro ao criar a tabela: {e}")
         connection.rollback()
         return False
-    finally:
-        if 'cursor' in locals() and cursor:
-            cursor.close()
+    """
+
 
 
 def create_customers(connection, nome, email, telefone, endereco):
     try:
         cursor = connection.cursor()
-        sql_insert = "INSERT INTO customers (nome, emai, telefone, endereco) VALUES (%s, %s, %s, %s)"
+        sql_insert = "INSERT INTO customers (nome, email, telefone, endereco) VALUES (%s, %s, %s, %s)"
         customers_data = (nome, email, telefone, endereco)
 
         cursor.execute(sql_insert, customers_data)
         connection.commit()
-        print(f"customerse '{nome}' inserido com sucesso! ID: {cursor.lastrowid}")
+        print(f"Cliente '{nome}' inserido com sucesso! ID: {cursor.lastrowid}")
         return True
     except mysql.connector.Error as e:
-        print(f"Erro ao inserir customerse: {e}")
+        print(f"Erro ao inserir cliente: {e}")
         connection.rollback()
         return False
     finally:
@@ -65,7 +77,7 @@ def create_customers(connection, nome, email, telefone, endereco):
         
 
 def main():
-    connection = connect_to_database()
+    connection = database.connect_to_database()
     if connection:
         print("Conexão bem sucedida com o banco de dados!")
 
@@ -81,7 +93,7 @@ def main():
         connection.close()
         print("Conexão com o MYSQL fechada!")
     else:
-        print("Não foi possível conectar ao banco de dados. Verificar as credencias em .env.")
+        print("Não foi possível conectar ao banco de dados. Verificar as credencias.")
 
 if __name__ == "__main__":
     main()
