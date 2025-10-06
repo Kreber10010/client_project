@@ -6,23 +6,6 @@ import database
 
 load_dotenv()
 
-"""
-def connect_to_database():
-    try:
-        connection = mysql.connector.connect(
-            host = os.getenv("DB_HOST"),
-            user = os.getenv("DB_USER"),
-            password = os.getenv("DB_PASSWORD"),
-            database = os.getenv("DB_DATABASE")
-        )
-        if connection.is_connected():
-            db_info = connection.get_server_info()
-            print(f"Conectado ao servidor MYSQL: , versão: {db_info}")
-            return connection
-    except mysql.connector.Error as e:
-        print(f"Erro ao conectar ao MySQL: {e}")
-"""
-
 def create_customers_table(connection):
     try:
         cursor = connection.cursor()
@@ -74,7 +57,28 @@ def create_customers(connection, nome, email, telefone, endereco):
     finally:
         if 'cursor' in locals() and cursor:
             cursor.close()
-        
+
+def read__all_customers(connection):
+    try:
+        cursor = connection.cursor()
+        sql_query = "SELECT id, nome, email, telefone FROM customers"
+        #customers_data = (id, nome, email, telefone)
+        cursor.execute(sql_query)
+
+        results = cursor.fetchall()
+
+        if results:
+            print("\n----- Lista de clientes cadastrados -----\n")
+            for customers in results:
+                print(f"ID: {customers[0]}, Nome: {customers[1]}, Email: {customers[2]}, Telefone: {customers[3]}")
+            print("---------------------------------------------")
+        else:
+            print("Nenhum cliente encontrado no banco de dados!")
+    except mysql.connector.Error as e:
+        print("Erro ao verificar clientes: {e}")
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
 
 def main():
     connection = database.connect_to_database()
@@ -83,10 +87,15 @@ def main():
 
         create_customers_table(connection)
 
-        customers_name =  "Fulano da Silva"
-        customers_email = "fulano.silva@gmail.com"
-        customers_phone = "91986207879"
-        customers_adress = "Rua A, 1895"
+        read__all_customers(connection)
+
+        print("\n----- Cadastro novo cliente -----\n")
+
+        customers_name =  input("Nome: ")
+        customers_email = input("Email: ")
+        customers_phone = input("Contato: ")
+        customers_adress = input("Endereço:")
+        print("-------------------------------------")
 
         create_customers(connection, customers_name, customers_email, customers_phone, customers_adress)
 
