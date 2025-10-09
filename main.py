@@ -3,6 +3,7 @@ import mysql.connector
 from mysql.connector import errorcode
 from dotenv import load_dotenv
 import database
+import metodos_crud
 
 load_dotenv()
 
@@ -38,56 +39,31 @@ def create_customers_table(connection):
         return False
     """
 
-
-
-def create_customers(connection, nome, email, telefone, endereco):
-    try:
-        cursor = connection.cursor()
-        sql_insert = "INSERT INTO customers (nome, email, telefone, endereco) VALUES (%s, %s, %s, %s)"
-        customers_data = (nome, email, telefone, endereco)
-
-        cursor.execute(sql_insert, customers_data)
-        connection.commit()
-        print(f"Cliente '{nome}' inserido com sucesso! ID: {cursor.lastrowid}")
-        return True
-    except mysql.connector.Error as e:
-        print(f"Erro ao inserir cliente: {e}")
-        connection.rollback()
-        return False
-    finally:
-        if 'cursor' in locals() and cursor:
-            cursor.close()
-
-def read__all_customers(connection):
-    try:
-        cursor = connection.cursor()
-        sql_query = "SELECT id, nome, email, telefone FROM customers"
-        #customers_data = (id, nome, email, telefone)
-        cursor.execute(sql_query)
-
-        results = cursor.fetchall()
-
-        if results:
-            print("\n----- Lista de clientes cadastrados -----\n")
-            for customers in results:
-                print(f"ID: {customers[0]}, Nome: {customers[1]}, Email: {customers[2]}, Telefone: {customers[3]}")
-            print("---------------------------------------------")
-        else:
-            print("Nenhum cliente encontrado no banco de dados!")
-    except mysql.connector.Error as e:
-        print("Erro ao verificar clientes: {e}")
-    finally:
-        if 'cursor' in locals() and cursor:
-            cursor.close()
+def menu(connection):
+    print("\n-------- Opções --------")
+    print("1: Criar")
+    print("2: Procurar")
+    print("3: Atualizar")
+    print("4: Deletar")
+    print("5: Sair")
+    print("---------------------------")
 
 def main():
+    opcoes = {
+        '1' = metodos_crud.create_customers,
+        '2' = metodos_crud.read__all_customers,
+        '3' = 
+        '4' = 
+        '5' = 
+    }
+
     connection = database.connect_to_database()
     if connection:
         print("Conexão bem sucedida com o banco de dados!")
 
         create_customers_table(connection)
 
-        read__all_customers(connection)
+        metodos_crud.read__all_customers(connection)
 
         print("\n----- Cadastro novo cliente -----\n")
 
@@ -97,7 +73,7 @@ def main():
         customers_adress = input("Endereço:")
         print("-------------------------------------")
 
-        create_customers(connection, customers_name, customers_email, customers_phone, customers_adress)
+        metodos_crud.create_customers(connection, customers_name, customers_email, customers_phone, customers_adress)
 
         connection.close()
         print("Conexão com o MYSQL fechada!")
