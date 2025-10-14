@@ -39,7 +39,7 @@ def create_customers_table(connection):
         return False
     """
 
-def menu(connection):
+def menu_principal():
     print("\n-------- Opções --------")
     print("1: Criar")
     print("2: Procurar")
@@ -48,13 +48,19 @@ def menu(connection):
     print("5: Sair")
     print("---------------------------")
 
+def sub_menu():
+    print("\n-------- Opções --------")
+    print("1: Nome")
+    print("2: Email")
+    print("3: Contato")
+    print("4: Endereço")
+
 def main():
     opcoes = {
-        '1' = metodos_crud.create_customers,
-        '2' = metodos_crud.read__all_customers,
-        '3' = 
-        '4' = 
-        '5' = 
+        '1' : metodos_crud.criar_novo_cliente,
+        '2' : metodos_crud.read__all_customers,
+        '3' : sub_menu,    
+        '4' : metodos_crud.delete_customers
     }
 
     connection = database.connect_to_database()
@@ -63,20 +69,16 @@ def main():
 
         create_customers_table(connection)
 
-        metodos_crud.read__all_customers(connection)
+        while True:
+            menu_principal()
+            escolha = input("Escolha uma opção: ")
 
-        print("\n----- Cadastro novo cliente -----\n")
+            if escolha == '5':
+                print("Saindo...")
+                break
 
-        customers_name =  input("Nome: ")
-        customers_email = input("Email: ")
-        customers_phone = input("Contato: ")
-        customers_adress = input("Endereço:")
-        print("-------------------------------------")
+        #metodos_crud.read__all_customers(connection)
 
-        metodos_crud.create_customers(connection, customers_name, customers_email, customers_phone, customers_adress)
-
-        connection.close()
-        print("Conexão com o MYSQL fechada!")
     else:
         print("Não foi possível conectar ao banco de dados. Verificar as credencias.")
 
