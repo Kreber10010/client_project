@@ -56,10 +56,15 @@ def read__all_customers(connection):
         if 'cursor' in locals() and cursor:
             cursor.close()
 
-def update_customers(connection):
+def update_customers(connection, escolha):
     try:
         cursor = connection.cursor()
-        print("update")
+        
+        #query_update = f"UPDATE customers SET nome = %s WHERE id = %s"
+        query_select = f"SELECT * FROM clientes WHERE id = %s"
+
+        
+
     except mysql.connector.Error as e:
         print("Erro ao atualizar dado: {e}")
     finally:
