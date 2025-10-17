@@ -48,18 +48,36 @@ def menu_principal():
     print("5: Sair")
     print("---------------------------")
 
-def sub_menu():
-    print("\n-------- Opções --------")
-    print("1: Nome")
-    print("2: Email")
-    print("3: Contato")
-    print("4: Endereço")
+def sub_menu(connection):
+    opcoes_submenu = {
+        '1' : metodos_crud.update_customers,
+        '2' : metodos_crud.update_customers,
+    }
+
+    while True:
+        
+        print("\n-------- Opções --------")
+        print("1: Nome")
+        print("2: Email")
+        print("3: Contato")
+        print("4: Endereço")
+        print("Voltar ao menu principal")
+        
+        escolha = input("Escolha qual dado você quer alterar: ")
+
+        if escolha == '5':
+            print("Voltando ao menu principal!")
+            break
+
+        funcao_sub_executar = opcoes_submenu.get(escolha)
+        if funcao_sub_executar:
+            funcao_sub_executar(connection, escolha)
+
 
 def main():
     opcoes = {
         '1' : metodos_crud.criar_novo_cliente,
-        '2' : metodos_crud.read__all_customers,
-        '3' : sub_menu,    
+        '2' : metodos_crud.read__all_customers,   
         '4' : metodos_crud.delete_customers
     }
 
@@ -69,13 +87,22 @@ def main():
 
         create_customers_table(connection)
 
-        while True:
+        while True: 
             menu_principal()
             escolha = input("Escolha uma opção: ")
 
             if escolha == '5':
                 print("Saindo...")
                 break
+            if escolha == '3':
+                sub_menu(connection)
+
+            funcao_a_executar = opcoes.get(escolha)
+
+            if funcao_a_executar:
+                funcao_a_executar(connection) #eu preciso passar a conennection dentro dessa f e não no vetor opções.
+            else:
+                print("Opção inválida!")
 
         #metodos_crud.read__all_customers(connection)
 
