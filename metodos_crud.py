@@ -51,20 +51,46 @@ def read__all_customers(connection):
         else:
             print("Nenhum cliente encontrado no banco de dados!")
     except mysql.connector.Error as e:
-        print("Erro ao verificar clientes: {e}")
+        print(f"Erro ao verificar clientes: {e}")
     finally:
         if 'cursor' in locals() and cursor:
             cursor.close()
 
-def update_customers(connection, escolha):
+def read_one(connection, nome):
     try:
         cursor = connection.cursor()
-        busca_customers(connection, id)
-        #query_update = f"UPDATE customers SET nome = %s WHERE id = %s"
+        sql_query = "SELECT nome, email, telefone WHERE nome = %s"
+        cursor.execute(sql_query)
 
+        linha = cursor.fetchone()
+
+        return linha
 
     except mysql.connector.Error as e:
-        print("Erro ao atualizar dado: {e}")
+        print(f"Erro ao verificar cliente: {e}")
+    finally:
+        if 'cursor' in locals() and cursor:
+            cursor.close()
+
+def update_customers(connection):
+    try:
+        cursor = connection.cursor()
+
+        print("Digite o nome do cliente a ser procurado: ")
+        nome_para_buscar = input("Nome: ")
+
+        busca_customers(connection, nome_para_buscar)
+        read_one(connection, nome_para_buscar)
+        
+        print("Novo nome: ")
+        novo_nome = input("Nome: ")
+
+        query_update = "UPDATE customers SET email = %s WHERE nome = %s"
+        cursor.execute(query_update, novo_nome)
+        
+
+    except mysql.connector.Error as e:
+        print(f"Erro ao atualizar dado: {e}")
     finally:
         if 'cursor' in locals() and cursor:
             cursor.close()
@@ -72,18 +98,19 @@ def update_customers(connection, escolha):
 def delete_customers():
     print("delete")
 
-def busca_customers(connection, id):
+def busca_customers(connection, nome_para_buscar):
     try:
         cursor = connection.cursor()
-        query_select = f"SELECT * FROM clientes WHERE id = %s"
-        id_busca = (id)
+        query_select = f"SELECT * FROM customers WHERE nome = %s"
+        nome_busca = (nome_para_buscar)
 
-        cursor.execute(query_select, id_busca)
+        cursor.execute(query_select, nome_busca)
+        item = cursor.fetchone()
 
-
+        return item
 
     except mysql.connector.Error as e:
-        print("Erro ao atualizar dado: {e}")
+        print(f"Erro ao atualizar dado: {e}")
     finally:
         if 'cursor' in locals() and cursor:
             cursor.close()
