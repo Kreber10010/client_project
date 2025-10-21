@@ -61,7 +61,7 @@ def sub_menu(connection):
         print("2: Email")
         print("3: Contato")
         print("4: Endereço")
-        print("Voltar ao menu principal")
+        print("5: Voltar ao menu principal")
         
         escolha = input("Escolha qual dado você quer alterar: ")
 
@@ -69,9 +69,9 @@ def sub_menu(connection):
             print("Voltando ao menu principal!")
             break
 
-        funcao_sub_executar = opcoes_submenu.get(escolha)
+        funcao_sub_executar = opcoes_submenu.get()
         if funcao_sub_executar:
-            funcao_sub_executar(connection, escolha)
+            funcao_sub_executar(connection)
 
 
 def main():
