@@ -51,7 +51,7 @@ def menu_principal():
 def sub_menu(connection):
     opcoes_submenu = {
         '1' : metodos_crud.update_customers,
-        '2' : metodos_crud.update_customers,
+        '2' : metodos_crud.update_customers
     }
 
     while True:
@@ -69,7 +69,7 @@ def sub_menu(connection):
             print("Voltando ao menu principal!")
             break
 
-        funcao_sub_executar = opcoes_submenu.get()
+        funcao_sub_executar = opcoes_submenu.get(escolha)
         if funcao_sub_executar:
             funcao_sub_executar(connection)
 
