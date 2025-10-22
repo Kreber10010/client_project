@@ -59,12 +59,20 @@ def read__all_customers(connection):
 def read_one(connection, nome):
     try:
         cursor = connection.cursor()
-        sql_query = "SELECT nome, email, telefone WHERE nome = %s"
-        cursor.execute(sql_query)
+        sql_query = "SELECT nome, email, telefone FROM customers WHERE nome = %s"
+        cursor.execute(sql_query, (nome, ))
 
         linha = cursor.fetchone()
 
-        return linha
+        if linha:
+            print(f"Dados do {nome}: ")
+            print(f"Nome: {linha[0]}")
+            print(f"Email: {linha[1]}")
+            #print(f"Telefone: {linha[2]}")
+            #print(f"Endereço: {linha[3]}")
+            print("---------------------------------------------")
+        else:
+            print("Nenhum cliente encontrado no banco de dados!")
 
     except mysql.connector.Error as e:
         print(f"Erro ao verificar cliente: {e}")
