@@ -65,12 +65,15 @@ def read_one(connection, nome):
         linha = cursor.fetchone()
 
         if linha:
-            print(f"Dados do {nome}: ")
+            print(f"Dados de {nome}: ")
             print(f"Nome: {linha[0]}")
             print(f"Email: {linha[1]}")
             #print(f"Telefone: {linha[2]}")
             #print(f"Endereço: {linha[3]}")
             print("---------------------------------------------")
+
+            return True
+            
         else:
             print("Nenhum cliente encontrado no banco de dados!")
 
@@ -87,14 +90,21 @@ def update_customers(connection):
         print("Digite o nome do cliente a ser procurado: ")
         nome_para_buscar = input("Nome: ")
 
-        busca_customers(connection, nome_para_buscar)
-        read_one(connection, nome_para_buscar)
-        
-        print("Novo nome: ")
-        novo_nome = input("Nome: ")
+        item_encontrado = read_one(connection, nome_para_buscar)
 
-        query_update = "UPDATE customers SET email = %s WHERE nome = %s"
-        cursor.execute(query_update, novo_nome)
+        #item_encontrado = busca_customers(connection, nome_para_buscar)
+        
+        if item_encontrado:
+            novo_nome = input("Digite novo nome: ")
+            valores = (novo_nome, nome_para_buscar)
+
+            query_update = "UPDATE customers SET nome = %s WHERE nome = %s"
+            cursor.execute(query_update, valores)
+            connection.commit()
+
+            read_one(connection, novo_nome)
+        else:
+            print("Nome buscado não foi encontrado!")
         
 
     except mysql.connector.Error as e:
@@ -106,13 +116,14 @@ def update_customers(connection):
 def delete_customers():
     print("delete")
 
+#No momento esse método não tem muita utilidade, pq já temos um método read_one que retorna os valores de cada linha do DB.
 def busca_customers(connection, nome_para_buscar):
     try:
         cursor = connection.cursor()
         query_select = f"SELECT * FROM customers WHERE nome = %s"
         nome_busca = (nome_para_buscar)
 
-        cursor.execute(query_select, nome_busca)
+        cursor.execute(query_select, (nome_busca), )
         item = cursor.fetchone()
 
         return item
