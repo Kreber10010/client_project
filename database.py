@@ -20,5 +20,3 @@ def connect_to_database():
             return connection
     except mysql.connector.Error as e:
         print(f"Erro ao conectar ao MySQL: {e}")
-
-#conn = connect_to_database("localhost", "root", "sua_senha", "nome_do_seu_banco")
