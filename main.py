@@ -39,14 +39,38 @@ def create_customers_table(connection):
         return False
     """
 
-def menu_principal():
-    print("\n-------- Opções --------")
-    print("1: Criar")
-    print("2: Procurar")
-    print("3: Atualizar")
-    print("4: Deletar")
-    print("5: Sair")
-    print("---------------------------")
+def menu_principal(connection):
+    opcoes = {
+            '1' : metodos_crud.criar_novo_cliente,
+            '2' : metodos_crud.read__all_customers,   
+            '4' : metodos_crud.delete_customers
+        }
+
+    while True:
+        print("\n-------- Opções --------")
+        print("1: Criar")
+        print("2: Procurar")
+        print("3: Atualizar")
+        print("4: Deletar")
+        print("5: Sair")
+        print("---------------------------")
+
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == "3":
+            sub_menu(connection)
+            continue
+
+        if escolha == "5":
+            print("Saindo...")
+            break
+
+        funcao_a_executar = opcoes.get(escolha)
+
+        if funcao_a_executar:
+            funcao_a_executar(connection)
+        else:
+            print("Opção inválida!")
 
 def sub_menu(connection):
     opcoes_submenu = {
@@ -72,40 +96,19 @@ def sub_menu(connection):
         funcao_sub_executar = opcoes_submenu.get(escolha)
         if funcao_sub_executar:
             funcao_sub_executar(connection)
+        else:
+            print("Opção inválida!")
 
 
 def main():
-    opcoes = {
-        '1' : metodos_crud.criar_novo_cliente,
-        '2' : metodos_crud.read__all_customers,   
-        '4' : metodos_crud.delete_customers
-    }
-
     connection = database.connect_to_database()
+
     if connection:
         print("Conexão bem sucedida com o banco de dados!")
 
         create_customers_table(connection)
-
-        while True: 
-            menu_principal()
-            escolha = input("Escolha uma opção: ")
-
-            if escolha == '5':
-                print("Saindo...")
-                break
-            if escolha == '3':
-                sub_menu(connection)
-
-            funcao_a_executar = opcoes.get(escolha)
-
-            if funcao_a_executar:
-                funcao_a_executar(connection) #eu preciso passar a conennection dentro dessa f e não no vetor opções.
-            else:
-                print("Opção inválida!")
-
-        #metodos_crud.read__all_customers(connection)
-
+        menu_principal(connection)
+        connection.close()
     else:
         print("Não foi possível conectar ao banco de dados. Verificar as credencias.")
 
