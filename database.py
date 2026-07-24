@@ -18,5 +18,5 @@ def connect_to_database():
             db_info = connection.get_server_info()
             print(f"Conectado ao servidor MYSQL: , versão: {db_info}")
             return connection
-    except mysql.connector.Error as e:
+    except Error as e:
         print(f"Erro ao conectar ao MySQL: {e}")
